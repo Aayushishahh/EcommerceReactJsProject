@@ -33,6 +33,8 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import { setHeaderToken } from "../api/client";
+import { logout } from "../redux/reducers/AuthSlice";
 
 export const drawerWidth = 240;
 
@@ -123,6 +125,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Header() {
   const cartproducts = useSelector((state) => state?.cart?.cartproducts);
+  const token = useSelector((state) => state?.auth?.userData?.data?.token);
   const cartItemsLength = cartproducts ? cartproducts.length : 0;
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -162,6 +165,7 @@ export default function Header() {
     setAnchorEl(null);
     handleMobileMenuClose();
     setIsLogoutOpen(true);
+
   };
 
   const handleMenuClose1 = () => {
@@ -172,6 +176,7 @@ export default function Header() {
 
   const handleLogoutConfirmation = () => {
     setIsLogoutOpen(false);
+    dispatch(logout());
     navigate("/login", { replace: true });
   };
 
