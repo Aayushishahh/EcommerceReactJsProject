@@ -42,7 +42,7 @@ export const authSlice = createSlice({
       state.userData = action.payload;
     },
     logout : (state,action) => {
-    state = null
+   state = action.payload;
     }
     // updateProfile: (state, action) => {
     //   state.profileData = action.payload;

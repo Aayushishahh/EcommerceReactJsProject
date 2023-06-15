@@ -176,7 +176,7 @@ export default function Header() {
 
   const handleLogoutConfirmation = () => {
     setIsLogoutOpen(false);
-    dispatch(logout());
+    dispatch(logout(null));
     navigate("/login", { replace: true });
   };
 
