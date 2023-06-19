@@ -93,6 +93,8 @@ import CustomerCare from "../assests/images/customercare.png";
 import shipping from "../assests/images/freeshipping.png";
 import money from "../assests/images/moneyback.png";
 import hours from "../assests/images/hours.png";
+import emptycart from "../assests/images/emptycart.gif"
+import emptycart2 from "../assests/images/emptycart2.gif"
 
 export const ICONS = {
   menu: MenuIcon,
@@ -192,5 +194,5 @@ export const IMAGES = {
   CustomerCare,
   shipping,
   money,
-  hours,
+  hours,emptycart,emptycart2
 };

@@ -143,22 +143,26 @@ const Orders = () => {
                       {item?.product_id?.name}
                     </Text>
                     <Text style={styles.tableCell}>
-                    {"Rs "}{item?.product_id?.price}
+                      {"Rs "}
+                      {item?.product_id?.price}
                     </Text>
                     <Text style={styles.tableCell}>{item?.qty}</Text>
                     <Text style={styles.tableCell}>
-                    {"Rs "}{item?.qty * item?.product_id?.price}
+                      {"Rs "}
+                      {item?.qty * item?.product_id?.price}
                     </Text>
                   </View>
                 ))}
               </View>
             </View>
             <Text style={styles.subtotal}>
-              SUB TOTAL: {"Rs "}{calculateSubtotal(orders)}
+              SUB TOTAL: {"Rs "}
+              {calculateSubtotal(orders)}
             </Text>
             <Text style={styles.subtotal}>DELIVERY: FREE</Text>
             <Text style={styles.subtotal}>
-              TOTAL: {"Rs "}{calculateSubtotal(orders)}
+              TOTAL: {"Rs "}
+              {calculateSubtotal(orders)}
             </Text>
           </View>
         </Page>

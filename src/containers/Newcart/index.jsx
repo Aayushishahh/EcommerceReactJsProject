@@ -31,7 +31,7 @@ import {
 } from "../../redux/reducers/CartSlice";
 import { api } from "../../api";
 import { DrawerContext } from "../../App";
-import { ICONS } from "../../assests";
+import { ICONS, IMAGES } from "../../assests";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Dialog,
@@ -55,6 +55,7 @@ const NewCart = () => {
   const { open, setOpen } = useContext(DrawerContext);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState(null);
+  const isCartEmpty = cartlist.length === 0;
 
   useEffect(() => {
     dispatch(getCart({ token: token }));
@@ -82,8 +83,12 @@ const NewCart = () => {
         id: id,
         token: token,
       };
-      await api.cart.update(data);
-      dispatch(getCart({ token: token }));
+      try {
+        await api.cart.update(data);
+        dispatch(getCart({ token: token }));
+      } catch (error) {
+        enqueueSnackbar("Error updating cart", error);
+      }
     }
   };
 
@@ -96,8 +101,12 @@ const NewCart = () => {
         id: id,
         token: token,
       };
-      await api.cart.update(data);
-      dispatch(getCart({ token: token }));
+      try {
+        await api.cart.update(data);
+        dispatch(getCart({ token: token }));
+      } catch (error) {
+        enqueueSnackbar("Error updating cart", { variant: "error" });
+      }
     }
   };
 
@@ -142,237 +151,265 @@ const NewCart = () => {
               <ICONS.back />
             </Button>
           </IconButton>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Typography
-                variant="h4"
-                align="center"
-                sx={{ fontWeight: "bold", my: 5 }}
-              >
-                Shopping Cart
+          {isCartEmpty ? (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+                textAlign: "center",
+                padding: "40px",
+              }}
+            >
+              <Typography variant="h4" align="center" sx={{ mb: 3 }}>
+                Your cart is empty
               </Typography>
-            </Grid>
-            <Grid item xs={12} md={8}>
-              <TableContainer
-                component={Card}
-                sx={{
-                  mr: 5,
-                  boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.1)",
-                  mb: 5,
-                }}
-              >
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Product</TableCell>
-                      <TableCell align="right">Name</TableCell>
-                      <TableCell align="right">Quantity</TableCell>
-                      <TableCell align="right">Price</TableCell>
-                      <TableCell align="right">Total</TableCell>
-                      <TableCell align="right"></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {cartlist?.map((item) => (
-                      <TableRow key={item?.product_id?._id}>
-                        <TableCell>
-                          <CardMedia
-                            component="img"
-                            image={`https://ecommerce-server-le5a.onrender.com/${item?.product_id?.image}`}
-                            alt={item?.product_id?.name}
-                            sx={{
-                              width: 100,
-                              height: 130,
-                              objectFit: "contain",
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                          {item?.product_id?.name}
-                        </TableCell>
-                        <TableCell align="right">
-                          <Box
-                            sx={{
-                              display: "flex",
-                              flexDirection: "row",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <Button
-                              variant="outlined"
-                              onClick={(e) =>
-                                handleDecrement(
-                                  item?._id,
-                                  item.qty,
-                                  item?.product_id?.price
-                                )
-                              }
-                              sx={{
-                                color: "red",
-                                marginRight: "8px",
-                                fontSize: "20px",
-                                height: "30px",
-                                width: "25px",
-                              }}
-                            >
-                              -
-                            </Button>
-                            <Typography
-                              sx={{
-                                fontSize: {
-                                  xs: "15px",
-                                  sm: "20px",
-                                  md: "20px",
-                                  xl: "20px",
-                                },
-                                fontWeight: "500",
-                              }}
-                            >
-                              {item?.qty}
-                            </Typography>
-                            <Button
-                              variant="outlined"
-                              onClick={(e) =>
-                                handleIncrement(item?._id, item?.qty)
-                              }
-                              sx={{
-                                color: "green",
-                                marginLeft: "8px",
-                                fontSize: "20px",
-                                height: "30px",
-                                width: "25px",
-                              }}
-                            >
-                              +
-                              {/* {isLoading ? <Loader size={20} /> : "+"}   */}
-                            </Button>
-                          </Box>
-                        </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                          {item?.product_id?.price}
-                        </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                          {item?.qty * item?.product_id?.price}
-                        </TableCell>
-                        <TableCell align="right">
-                          <IconButton
-                            aria-label="delete"
-                            color="error"
-                            onClick={() => handleDelete(item?.product_id?._id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                          <Dialog
-                            open={isDeleteOpen}
-                            onClose={() => setIsDeleteOpen(false)}
-                          >
-                            {/* <DialogTitle>Confirmation</DialogTitle> */}
-                            <DialogContent>
-                              <Typography>
-                                Are you sure you want to delete this product
-                                from cart?
-                              </Typography>
-                            </DialogContent>
-                            <DialogActions>
-                              <Button onClick={() => setIsDeleteOpen(false)}>
-                                Cancel
-                              </Button>
-                              <Button
-                                onClick={handleDeleteConfirmation}
-                                autoFocus
-                              >
-                                Delete
-                              </Button>
-                            </DialogActions>
-                          </Dialog>
-                        </TableCell>
+              <img
+                src={IMAGES.emptycart2}
+                alt="Empty Cart"
+                style={{ width: "400px", marginBottom: "20px", color: "black" }}
+              />
+              <Typography variant="body1" sx={{ color: "#888888" }}>
+                Start shopping now to fill up your cart!
+              </Typography>
+            </Box>
+          ) : (
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Typography
+                  variant="h4"
+                  align="center"
+                  sx={{ fontWeight: "bold", my: 5 }}
+                >
+                  Shopping Cart
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <TableContainer
+                  component={Card}
+                  sx={{
+                    mr: 5,
+                    boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.1)",
+                    mb: 5,
+                  }}
+                >
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Product</TableCell>
+                        <TableCell align="right">Name</TableCell>
+                        <TableCell align="right">Quantity</TableCell>
+                        <TableCell align="right">Price</TableCell>
+                        <TableCell align="right">Total</TableCell>
+                        <TableCell align="right"></TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
-                    Cart Total
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: 1,
-                    }}
-                  >
-                    <span>Total Items:</span>
-                    <span>{cartlist?.length}</span>
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: 1,
-                    }}
-                  >
-                    <span>Subtotal:</span>
-                    <span>
-                      {"₹"} {grandTotal}
-                    </span>
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: 1,
-                    }}
-                  >
-                    <span>Delivery:</span>
-                    <span>Free</span>
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: 1,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    <span>Grand Total:</span>
-                    <span>
-                      {"₹"} {grandTotal}
-                    </span>
-                  </Typography>
-                </CardContent>
+                    </TableHead>
+                    <TableBody>
+                      {cartlist?.map((item) => (
+                        <TableRow key={item?.product_id?._id}>
+                          <TableCell>
+                            <CardMedia
+                              component="img"
+                              image={`https://ecommerce-server-le5a.onrender.com/${item?.product_id?.image}`}
+                              alt={item?.product_id?.name}
+                              sx={{
+                                width: 100,
+                                height: 130,
+                                objectFit: "contain",
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                            {item?.product_id?.name}
+                          </TableCell>
+                          <TableCell align="right">
+                            <Box
+                              sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <Button
+                                variant="outlined"
+                                onClick={(e) =>
+                                  handleDecrement(
+                                    item?._id,
+                                    item.qty,
+                                    item?.product_id?.price
+                                  )
+                                }
+                                sx={{
+                                  color: "red",
+                                  marginRight: "8px",
+                                  fontSize: "20px",
+                                  height: "30px",
+                                  width: "25px",
+                                }}
+                              >
+                                -
+                              </Button>
+                              <Typography
+                                sx={{
+                                  fontSize: {
+                                    xs: "15px",
+                                    sm: "20px",
+                                    md: "20px",
+                                    xl: "20px",
+                                  },
+                                  fontWeight: "500",
+                                }}
+                              >
+                                {item?.qty}
+                              </Typography>
+                              <Button
+                                variant="outlined"
+                                onClick={(e) =>
+                                  handleIncrement(item?._id, item?.qty)
+                                }
+                                sx={{
+                                  color: "green",
+                                  marginLeft: "8px",
+                                  fontSize: "20px",
+                                  height: "30px",
+                                  width: "25px",
+                                }}
+                              >
+                                +
+                                {/* {isLoading ? <Loader size={20} /> : "+"}   */}
+                              </Button>
+                            </Box>
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                            {item?.product_id?.price}
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                            {item?.qty * item?.product_id?.price}
+                          </TableCell>
+                          <TableCell align="right">
+                            <IconButton
+                              aria-label="delete"
+                              color="error"
+                              onClick={() =>
+                                handleDelete(item?.product_id?._id)
+                              }
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                            <Dialog
+                              open={isDeleteOpen}
+                              onClose={() => setIsDeleteOpen(false)}
+                            >
+                              {/* <DialogTitle>Confirmation</DialogTitle> */}
+                              <DialogContent>
+                                <Typography>
+                                  Are you sure you want to delete this product
+                                  from cart?
+                                </Typography>
+                              </DialogContent>
+                              <DialogActions>
+                                <Button onClick={() => setIsDeleteOpen(false)}>
+                                  Cancel
+                                </Button>
+                                <Button
+                                  onClick={handleDeleteConfirmation}
+                                  autoFocus
+                                >
+                                  Delete
+                                </Button>
+                              </DialogActions>
+                            </Dialog>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
+                      Cart Total
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 1,
+                      }}
+                    >
+                      <span>Total Items:</span>
+                      <span>{cartlist?.length}</span>
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 1,
+                      }}
+                    >
+                      <span>Subtotal:</span>
+                      <span>
+                        {"₹"} {grandTotal}
+                      </span>
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 1,
+                      }}
+                    >
+                      <span>Delivery:</span>
+                      <span>Free</span>
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 1,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      <span>Grand Total:</span>
+                      <span>
+                        {"₹"} {grandTotal}
+                      </span>
+                    </Typography>
+                  </CardContent>
 
-                <CardActions>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    onClick={handlePlaceOrder}
-                    style={{
-                      backgroundColor: "#757575",
-                      color: "#ffffff",
-                      "&:hover": {
-                        backgroundColor: "#555555",
-                      },
-                    }}
-                    disabled={isLoading}
-                  >
-                    Checkout
-                  </Button>
-                </CardActions>
-              </Card>
+                  <CardActions>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={handlePlaceOrder}
+                      style={{
+                        backgroundColor: "#757575",
+                        color: "#ffffff",
+                        "&:hover": {
+                          backgroundColor: "#555555",
+                        },
+                      }}
+                      disabled={isLoading}
+                    >
+                      Checkout
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
             </Grid>
-          </Grid>
+          )}
         </Box>
       </Container>
     </>

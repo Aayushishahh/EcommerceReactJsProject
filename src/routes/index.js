@@ -11,7 +11,6 @@ import AboutUs from "../containers/AboutUs";
 import NewProductDetails from "../containers/NewProductDetails";
 import ProductCards from "../containers/Home/HomeCards";
 import NewCart from "../containers/Newcart";
-import PaymentPage from "../containers/Payment";
 import ProductCategory from "../containers/ProductCategory";
 import Orders from "../containers/Orders";
 import Checkout from "../containers/Checkout";
@@ -51,18 +50,15 @@ function Routing() {
           <Route path="/account" element={<Account />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/customer" element={<Customer />} />
-          {/* <Route path="/productdetails/:id" element={<ProductDetails />} /> */}
+
           <Route
             path="/newproductdetails/:id"
             element={<NewProductDetails />}
           />
           <Route path="/orders" element={<Orders />} />
           <Route path="/chechout" element={<Checkout />} />
-          {/* <Route path="/cart" element={<Cart />} /> */}
-          <Route path="/newcart" element={<NewCart />} />
 
-          {/* <Route path="/billing" element={<PaymentPage />} /> */}
-          {/* <Route path="/CartPage" element={<CartPage/>}/> */}
+          <Route path="/newcart" element={<NewCart />} />
         </Route>
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/login" element={<Login />} />

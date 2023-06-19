@@ -252,7 +252,7 @@ export default function NewProductDetails() {
                       }}
                       disabled={isLoading}
                     >
-                      {isLoading ? <Loader size={20}/> : "Add to Cart"}
+                      {isLoading ? <Loader size={20} /> : "Add to Cart"}
                     </Button>
                   </CardActions>
                   <Box

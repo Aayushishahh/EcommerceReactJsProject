@@ -68,7 +68,6 @@ export const cartSlice = createSlice({
       state.cartproducts = action.payload;
     });
     builder.addCase(removecartItems.fulfilled, (state, action) => {
-      console.log("action", action);
       state.cartproducts = state.cartproducts.filter(
         (item) => item.product_id && item.product_id._id !== action.payload
       );

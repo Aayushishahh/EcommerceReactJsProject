@@ -165,7 +165,6 @@ export default function Header() {
     setAnchorEl(null);
     handleMobileMenuClose();
     setIsLogoutOpen(true);
-
   };
 
   const handleMenuClose1 = () => {
